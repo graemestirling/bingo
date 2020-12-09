@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Quarterly Bingo!</title>
+        <meta name="description" content="Play Bingo!" />
+
+        <meta property="og:title" content="Quarterly Bingo!" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Quarterly Bingo!" />
+        <meta property="og:description" content="It’s time to play Quarterly Bingo!" />
+
+        <link rel="stylesheet" href="static/styles/styles.css">
+        <link rel="shortcut icon" type="image/png" href="static/images/troll.png">
+        <link rel="apple-touch-icon-precomposed" href="static/images/troll.png">
+
+    </head>
+    <body>
+        <div class="container-fluid">
+            <header>
+                <h1 class="my-4 display-4">Quarterly Bingo!</h1>
+            </header>
+
+            <div id="bingo">
+                <h1 class="my-4 display-1">BINGO!</h1>
+                <a class="btn btn-dark" href="?">Play again?</a>
+            </div>
+
+            <table id="bingoCard" class="table-responsive my-4 mx-auto">
+                <tbody id="playCard">
+                </tbody>
+            </table>
+
+            <footer>
+                <a class="btn btn-outline-dark mr-2" href="?">New Bingo Card</a>
+                </p>
+            </footer>
+        </div>
+
+        <script>
+            strings = [
+                "Skit about WFH",
+                "“The Cloud”",
+                "“AWS”",
+                "“GCP”",
+                "“Azure”",
+                "“Jeff Bezos”",
+                "“Re:Invent”",
+                "“Snowflake”",
+                "“Migrating Infrastructure”",
+                "Wipro",
+                "TCS",
+                "Cognizant",
+                "Gartner",
+                "Someone unmuted on the call with odd background noises",
+                "Here comes the finance bit!",
+                "Bad jokes, Ahoy!",
+                "“Some reference to Monty Python”",
+                "“We think it’s great”",
+                "“Here it is”",
+                "“On-brand Background Image”",
+                "“Off-brand Background Image",
+                "“Million”",
+                "EXCRUCIATING third party demo",
+                "New, fairly dreary, AWS feature gets ridiculous name",
+                "Poorly implemented cloud feature",
+                "Automate ALL THE THINGS",
+                "“Partnership”",
+                "“It’s available in beta, right now”",
+                "Talk about Something Technical",
+                "A mention about diversity",
+                "A giphy that is oddly specific",
+                "Losing track of the topic being discussed",
+                "Mention of Innovation",
+                "Snowflake"
+                ]
+
+            function shuffle(array) {
+                var currentIndex = array.length;
+                var temporaryValue;
+                var randomIndex;
+                while (0 !== currentIndex) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex -= 1;
+                    temporaryValue = array[currentIndex];
+                    array[currentIndex] = array[randomIndex];
+                    array[randomIndex] = temporaryValue;
+                }
+                return array;
+            }
+
+            var shuffled_strings = shuffle(strings);
+            el_playcard = document.getElementById('playCard');
+            for(var row = 0; row < 5; row += 1) {
+                el_row = el_playcard.insertRow(-1);
+
+                for(var col = 0; col < 5; col += 1) {
+                    el_cell = el_row.insertCell(0);
+                    if(row == 2 && col == 2) {
+                        el_cell.innerHTML = '<br /><br /><br />';
+                        el_cell.classList.add('marked');
+                        el_cell.classList.add('marked-free');
+                    }
+                    else {
+                        el_cell.innerHTML = shuffled_strings.pop();
+                        el_cell.addEventListener('click', mark_cell, false);
+                    }
+                }
+            }
+
+            var bingo_counter = 0;
+
+            var marked_sound = new Audio('static/sounds/click.wav');
+            marked_sound.load();
+            var bingo_sound = new Audio('static/sounds/claxon.wav');
+            bingo_sound.load();
+
+            function mark_cell(cell) {
+                cell.srcElement.removeEventListener('click', mark_cell);
+                cell.srcElement.classList.add('marked');
+                bingo_counter++;
+
+                if(bingo_counter === 24) {
+                    document.querySelectorAll('td').forEach(function (e) {
+                        e.classList.add('rotate-out');
+                    });
+                    bingo_sound.play();
+                    window.setTimeout(function() {
+                        play_again = document.getElementById('bingo');
+                        play_again.classList.add('bounce-in');
+                        play_again.style.display = 'block';
+
+                        bingoCard = document.getElementById('bingoCard');
+                        bingoCard.style.visibility = 'hidden';
+                    }, 400);
+                }
+                else {
+                    marked_sound.play();
+                }
+            }
+        </script>
+    </body>
+</html>
